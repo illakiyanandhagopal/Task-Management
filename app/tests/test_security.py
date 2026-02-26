@@ -5,11 +5,6 @@ from app.core.security import verify_password, get_password_hash, create_access_
 def raw_password():
     return "Hello@123"
 
-@pytest.fixture
-def encoded_token():
-    datas={"user1@gmail.com"}
-    return create_access_token(datas)
-
 def test_password_hash(raw_password):
     assert raw_password!=get_password_hash(raw_password)
 
