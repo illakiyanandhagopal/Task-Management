@@ -7,10 +7,11 @@ from app.database import AsyncSessionLocal, get_db
 from app.core.security import SECRET_KEY, ALGORITHM
 from app.models import User
 
+
 async def get_current_user_from_cookies(
-        request: Request, db: AsyncSession = Depends(get_db)
+    request: Request, db: AsyncSession = Depends(get_db)
 ):
-    token=request.cookies.get("access_token")
+    token = request.cookies.get("access_token")
 
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
