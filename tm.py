@@ -1,6 +1,7 @@
 from pytm import TM, Server, Datastore, Dataflow, Actor, Boundary
 
 tm = TM("Task Management System")
+tm.description = "A FastAPI application with SQLAlchemy and PostgreSQL"
 
 # Define Entities
 user = Actor("Employee")
