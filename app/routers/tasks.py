@@ -79,3 +79,5 @@ async def delete_task(
     await db.delete(task)
     await db.commit()
     return {"Message :": f"Task ID - {task_id} has successfully Deleted"}
+
+#----------------------------------------------------------------------------------------------------------------------
