@@ -26,7 +26,7 @@ jobs:
       - name: Run tests
         run: |
           export PYTHONPATH=$PWD
-          pytest -vaz login
+          pytest -v
 
       - name: Run Snyk to check Python dependencies
         uses: snyk/actions/python@master
