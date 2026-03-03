@@ -33,7 +33,8 @@ jobs:
         env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high
+          command: test
+          args: --file=requirements.txt --severity-threshold=high
 
       - name: Build Docker image
         run: docker build -t taskmanagement-api .
