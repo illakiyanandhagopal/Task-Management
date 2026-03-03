@@ -33,23 +33,26 @@ jobs:
           export PYTHONPATH=$PWD
           pytest -v
 
-      # 5️⃣ Run Snyk dependency scan (Official Action)
-      - name: Run Snyk dependency scan
-        uses: snyk/actions/python@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --file=requirements.txt --severity-threshold=high
+      # 5️⃣ Install Snyk CLI
+      - name: Install Snyk CLI
+        run: npm install -g snyk
 
-      # 6️⃣ Build Docker image
+      # 6️⃣ Authenticate Snyk
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      # 7️⃣ Run Snyk dependency scan (Fail on High & Critical)
+      - name: Run Snyk dependency scan
+        run: snyk test --file=requirements.txt --severity-threshold=high
+
+      # 8️⃣ Monitor project in Snyk (Tracks future vulnerabilities)
+      - name: Monitor project in Snyk
+        run: snyk monitor --file=requirements.txt
+
+      # 9️⃣ Build Docker image
       - name: Build Docker image
         run: docker build -t taskmanagement-api .
 
-      # 7️⃣ Scan Docker image with Snyk
+      # 🔟 Scan Docker image with Snyk
       - name: Run Snyk Docker scan
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: taskmanagement-api
-          args: --severity-threshold=high
+        run: snyk container test taskmanagement-api --severity-threshold=high
