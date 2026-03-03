@@ -2,45 +2,51 @@ name: CI - FastAPI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
-  test-and-build:
+  test-build-scan:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      # 4️⃣ Run tests
       - name: Run tests
         run: |
           export PYTHONPATH=$PWD
           pytest -v
 
-      - name: Install Snyk CLI
-        run: npm install -g snyk
-
-      - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
+      # 5️⃣ Run Snyk dependency scan (Official Action)
       - name: Run Snyk dependency scan
-        run: snyk test --file=requirements.txt --package-manager=pip --severity-threshold=high
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --file=requirements.txt --severity-threshold=high
 
+      # 6️⃣ Build Docker image
       - name: Build Docker image
         run: docker build -t taskmanagement-api .
 
-      - name: Run Snyk to check Docker image
+      # 7️⃣ Scan Docker image with Snyk
+      - name: Run Snyk Docker scan
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
