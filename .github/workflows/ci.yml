@@ -28,13 +28,14 @@ jobs:
           export PYTHONPATH=$PWD
           pytest -v
 
-      - name: Run Snyk to check Python dependencies
-        uses: snyk/actions/python@master
-        env:
-         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: test
-          args: --file=requirements.txt --severity-threshold=high
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Run Snyk dependency scan
+        run: snyk test --file=requirements.txt --package-manager=pip --severity-threshold=high
 
       - name: Build Docker image
         run: docker build -t taskmanagement-api .
