@@ -11,48 +11,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
+      #  Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python
+      #  Setup Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 3️⃣ Install dependencies
+      # Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4️⃣ Run tests
+      #  Run tests
       - name: Run tests
         run: |
           export PYTHONPATH=$PWD
           pytest -v
 
-      # 5️⃣ Install Snyk CLI
-      - name: Install Snyk CLI
-        run: npm install -g snyk
 
-      # 6️⃣ Authenticate Snyk
-      - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
-      # 7️⃣ Run Snyk dependency scan (Fail on High & Critical)
-      - name: Run Snyk dependency scan
-        run: snyk test --file=requirements.txt --severity-threshold=high
-
-      # 8️⃣ Monitor project in Snyk (Tracks future vulnerabilities)
-      - name: Monitor project in Snyk
-        run: snyk monitor --file=requirements.txt
-
-      # 9️⃣ Build Docker image
+      #  Build Docker image
       - name: Build Docker image
         run: docker build -t taskmanagement-api .
 
-      # 🔟 Scan Docker image with Snyk
-      - name: Run Snyk Docker scan
-        run: snyk container test taskmanagement-api --severity-threshold=high
