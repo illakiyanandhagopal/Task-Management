@@ -10,6 +10,10 @@ async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+@app.get("/")
+def read_root():
+    return {"message": "API is running"}
+
 
 app.include_router(auth.router)
 app.include_router(users.router)
